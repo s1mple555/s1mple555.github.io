@@ -1,6 +1,9 @@
+http://s1mple555.github.io/2026/05/10/Hexo+github%20pages/
 http://s1mple555.github.io/2026/05/10/hello-world/
 http://s1mple555.github.io/404.html
 http://s1mple555.github.io/about/index.html
 http://s1mple555.github.io/
 http://s1mple555.github.io/tags/%E9%9A%8F%E7%AC%94/
+http://s1mple555.github.io/tags/%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/
 http://s1mple555.github.io/categories/%E6%9C%AC%E7%A7%91%E7%94%9F%E6%B4%BB/
+http://s1mple555.github.io/categories/%E5%AD%A6%E4%B9%A0/

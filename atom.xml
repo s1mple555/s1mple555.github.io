@@ -12,7 +12,25 @@
     <![CDATA[blogs about Agent & Backend & Life]]>
   </subtitle>
   <title>S1mple_page</title>
-  <updated>2026-05-10T12:05:21.723Z</updated>
+  <updated>2026-05-10T15:16:08.775Z</updated>
+  <entry>
+    <author>
+      <name>S1mple</name>
+    </author>
+    <category term="学习" scheme="http://s1mple555.github.io/categories/%E5%AD%A6%E4%B9%A0/"/>
+    <category term="博客搭建" scheme="http://s1mple555.github.io/tags/%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/"/>
+    <content>
+      <![CDATA[<p>待补充…</p>]]>
+    </content>
+    <id>http://s1mple555.github.io/2026/05/10/Hexo+github%20pages/</id>
+    <link href="http://s1mple555.github.io/2026/05/10/Hexo+github%20pages/"/>
+    <published>2026-05-10T15:10:00.000Z</published>
+    <summary>
+      <![CDATA[<p>待补充…</p>]]>
+    </summary>
+    <title>Hexo+github pages搭建个人主页教程</title>
+    <updated>2026-05-10T15:16:08.775Z</updated>
+  </entry>
   <entry>
     <author>
       <name>S1mple</name>
