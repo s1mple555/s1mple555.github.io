@@ -1,7 +1,9 @@
 ---
-import { siteConfig, asset } from '../config';
+import { siteConfig } from '../config';
+import { getHeroImage } from '../lib/hero-image';
 import SocialLink from './SocialLink.astro';
 import Icon from './Icon.astro';
+const portrait = await getHeroImage();
 ---
 <section class="screen hero" id="hero" aria-labelledby="hero-title">
   <svg class="hero-grid-lines" aria-hidden="true" width="100%" height="100%">
@@ -17,6 +19,22 @@ import Icon from './Icon.astro';
       <div class="hero-actions"><SocialLink class="button button-primary" label="GitHub 主页" /><SocialLink kind="email" class="button button-secondary" label="联系我" /></div>
       <div class="hero-social"><SocialLink class="icon-link" label="GitHub" /><SocialLink kind="email" class="icon-link" label="邮件联系" /></div>
     </div>
-    <div class="identity-frame">{siteConfig.avatar ? <img class="portrait" src={asset(siteConfig.avatar)} alt="个人头像" width="1200" height="900" fetchpriority="high" /> : <div class="identity-art" aria-label="个人头像待补充"><div class="art-grid" aria-hidden="true"></div><div class="code-emblem"><Icon name="code" size={88} /></div></div>}</div>
+    <div class="identity-frame">{portrait ? <img class="portrait" src={portrait.src} srcset={portrait.srcSet.attribute} {...portrait.attributes} data-fallback-src={siteConfig.avatar.src} alt="个人头像" /> : <div class="identity-art" aria-label="个人头像待补充"><div class="art-grid" aria-hidden="true"></div><div class="code-emblem"><Icon name="code" size={88} /></div></div>}</div>
   </div>
 </section>
+<script>
+  const portrait = document.querySelector<HTMLImageElement>('.portrait');
+  if (portrait) {
+    const recoverPortrait = () => {
+      const fallback = portrait.dataset.fallbackSrc;
+      if (!fallback || portrait.dataset.fallbackUsed === 'true') return;
+      portrait.dataset.fallbackUsed = 'true';
+      portrait.removeAttribute('srcset');
+      portrait.removeAttribute('sizes');
+      portrait.src = fallback;
+    };
+    portrait.addEventListener('error', recoverPortrait);
+    // A cached failure can finish before this module runs.
+    if (portrait.complete && portrait.naturalWidth === 0) recoverPortrait();
+  }
+</script>

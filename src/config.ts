@@ -1,10 +1,12 @@
+import avatar from './assets/avatar.webp';
+
 /** Empty fields preserve the reference layout without invented personal information. */
 export const siteConfig = {
   name: 'S1mple',
   role: 'Agent / AI 应用工程师',
   description: '致力于做出真正有价值的 Agent 产品。',
   statement: '致力于做出真正有价值的 Agent 产品。',
-  avatar: 'images/avatar.webp', github: 'https://github.com/s1mple555', email: 'hfan@seu.edu.cn',
+  avatar, github: 'https://github.com/s1mple555', email: 'hfan@seu.edu.cn',
   about: [
     '我叫范赫，现就读于东南大学，专注 Agent / AI 应用工程。',
     'Python 后端开发是我的工程底座。我主导过多个 Agent 项目，从零搭建多 Agent 协作系统，覆盖 RAG、工具调用、长短期记忆与多轮对话，关注任务调度、状态管理和结果聚合。',

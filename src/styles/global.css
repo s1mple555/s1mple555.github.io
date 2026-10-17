@@ -68,10 +68,21 @@ ul { list-style:none; margin:0; padding:0; }
 .identity-frame { position:relative; margin:0; }
 .identity-frame::before { content:''; position:absolute; inset:-11px; border:1px solid #1d4ed83d; border-radius:26px; transform:rotate(4deg); z-index:-1; }
 .identity-art,.portrait { width:100%; border:5px solid #fff; border-radius:22px; box-shadow:0 22px 50px -21px #253c7259; }
-.portrait { height:auto; object-fit:contain; }
+.portrait { height:auto; aspect-ratio:4/3; object-fit:contain; background:#eef3ff; }
 .identity-art { position:relative; display:grid; place-items:center; aspect-ratio:1; overflow:hidden; background:linear-gradient(135deg,#e4edff,#f5f8ff 48%,#dbe8ff); }
 .art-grid { position:absolute; inset:0; background-image:linear-gradient(#1d4ed80a 1px,transparent 1px),linear-gradient(90deg,#1d4ed80a 1px,transparent 1px); background-size:30px 30px; }
 .code-emblem { position:relative; display:grid; place-items:center; width:142px; height:142px; border-radius:36px; background:#ffffffc9; color:var(--blue); transform:rotate(-5deg); box-shadow:0 12px 30px #1d4ed814; }
+/* One entrance per page load; the visible base styles never depend on JavaScript. */
+@media (prefers-reduced-motion:no-preference) {
+  .hero-intro > *,.hero .identity-frame { animation:hero-enter .8s ease-out backwards; }
+  .hero h1 { animation-delay:.2s; }
+  .hero-role,.hero-statement { animation-delay:.4s; }
+  .hero-actions,.hero-social,.hero .identity-frame { animation-delay:.6s; }
+}
+@keyframes hero-enter {
+  from { opacity:0; transform:translateY(20px); }
+  to { opacity:1; transform:translateY(0); }
+}
 /* Reference about: 3 paragraphs and a 2 by 2 capability grid. */
 /* Leave room for the last row's hover rotation inside the section scroller. */
 .about-content { padding-bottom:8px; }
