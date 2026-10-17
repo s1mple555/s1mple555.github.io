@@ -1,0 +1,45 @@
+---
+import { siteConfig, navigation, asset } from '../config';
+import Icon from './Icon.astro';
+import SocialLink from './SocialLink.astro';
+interface Props { page?: 'home' | 'posts'; }
+const { page = 'home' } = Astro.props;
+const home = asset('');
+const href = (item: (typeof navigation)[number]) => item.path ? asset(item.path) : (page === 'home' ? '' : home) + '#' + item.id;
+---
+<header class:list={['site-header', { 'is-scrolled': page !== 'home' }]} id="site-header" data-page={page}>
+  <nav class="navigation container" aria-label="主导航">
+    <a class="mobile-brand" href={home + '#hero'} aria-label="回到首页"><Icon name="code" /><span>{siteConfig.name || 'AI Developer'}</span></a>
+    <ul class="desktop-links">{navigation.map((item) => <li><a href={href(item)} data-nav-link={item.path ? undefined : item.id} aria-current={item.path && page === 'posts' ? 'page' : undefined}><span class="nav-chinese">{item.label}</span><span class="nav-english" lang="en">{item.english}</span></a></li>)}<li><SocialLink class="github-nav" /></li></ul>
+    <button class="menu-toggle" id="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-navigation" aria-label="打开导航菜单"><Icon name="menu" /></button>
+  </nav>
+  <nav class="mobile-navigation container" id="mobile-navigation" aria-label="移动端导航" hidden>{navigation.map((item) => <a href={href(item)} aria-current={item.path && page === 'posts' ? 'page' : undefined}><span class="nav-chinese">{item.label}</span><span class="nav-english" lang="en">{item.english}</span></a>)}<SocialLink class="github-nav" label="GitHub 主页" /></nav>
+</header>
+<script>
+  const button = document.querySelector<HTMLButtonElement>('#menu-toggle');
+  const menu = document.querySelector<HTMLElement>('#mobile-navigation');
+  const header = document.querySelector<HTMLElement>('#site-header');
+  const setOpen = (open: boolean) => {
+    button?.setAttribute('aria-expanded', String(open));
+    button?.setAttribute('aria-label', open ? '关闭导航菜单' : '打开导航菜单');
+    if (menu) menu.hidden = !open;
+  };
+  button?.addEventListener('click', () => setOpen(button.getAttribute('aria-expanded') !== 'true'));
+  menu?.querySelectorAll('a, button').forEach((link) => link.addEventListener('click', () => setOpen(false)));
+  document.addEventListener('keydown', (event) => { if (event.key === 'Escape') setOpen(false); });
+  document.addEventListener('click', (event) => { if (event.target instanceof Node && !header?.contains(event.target)) setOpen(false); });
+  window.matchMedia('(min-width: 860px)').addEventListener('change', (event) => { if (event.matches) setOpen(false); });
+  const updateHeader = () => header?.classList.toggle('is-scrolled', header.dataset.page !== 'home' || window.scrollY > 24);
+  window.addEventListener('scroll', updateHeader, { passive: true });
+  updateHeader();
+  const navLinks = document.querySelectorAll<HTMLAnchorElement>('[data-nav-link]');
+  const observer = new IntersectionObserver((entries) => {
+    for (const entry of entries) {
+      if (entry.isIntersecting) navLinks.forEach((link) => {
+        if (link.dataset.navLink === (entry.target.getAttribute('data-nav-group') || entry.target.id)) link.setAttribute('aria-current', 'location');
+        else link.removeAttribute('aria-current');
+      });
+    }
+  }, { rootMargin: '-16% 0px -65% 0px' });
+  document.querySelectorAll('main section[id]').forEach((section) => observer.observe(section));
+</script>

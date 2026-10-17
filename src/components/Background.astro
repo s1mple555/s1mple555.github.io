@@ -1,0 +1,41 @@
+---
+import { siteConfig } from '../config';
+import SectionHeading from './SectionHeading.astro';
+---
+<section class="screen" id="experience" aria-labelledby="experience-title">
+  <div class="container screen-content section-grid experience-layout">
+    <div class="experience-title"><SectionHeading title="经历" english="Experience" id="experience-title" /></div>
+    <div class="experience-education">
+      <h3 class="experience-group-title">教育经历 <span lang="en">Education</span></h3>
+      <ul class="education-list">
+        {siteConfig.education.map((entry) => <li class="education-entry">
+          <div class="education-main"><h4 class="education-school">{entry.school}</h4><p class="education-program">{entry.program}</p></div>
+          <div class="education-meta"><p class="education-period">{entry.period}</p>{entry.location && <p class="education-location">{entry.location}</p>}</div>
+          {entry.note && <p class="education-note">{entry.note}</p>}
+        </li>)}
+      </ul>
+    </div>
+    <div class="experience-content">
+      <div class="experience-awards">
+        <h3 class="experience-group-title">竞赛奖项 <span lang="en">Awards</span></h3>
+        <ul class="academic-awards">
+          {siteConfig.academicAwards.map((award) => <li>
+            <span class="award-year">{award.year}</span>
+            <div><p class="award-name">{award.name}</p>{award.detail && <p class="award-detail">{award.detail}</p>}</div>
+            <strong class="award-result">{award.result}</strong>
+          </li>)}
+        </ul>
+      </div>
+      <div>
+        <h3 class="experience-group-title">科研项目 <span lang="en">Research</span></h3>
+        <div class="research-list">
+          {siteConfig.experience.map((entry) => <article class="experience-card">
+            <h4>{entry.title}</h4>
+            <p class="experience-period">{entry.period}</p>
+            <ul>{entry.bullets.map((bullet) => <li>{bullet}</li>)}</ul>
+          </article>)}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

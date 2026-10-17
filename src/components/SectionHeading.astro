@@ -1,0 +1,6 @@
+---
+interface Props { title: string; english: string; id?: string; level?: 'h1' | 'h2'; rule?: boolean; }
+const { title, english, id, level = 'h2', rule = true } = Astro.props;
+const Tag = level;
+---
+<div class="section-heading"><p class="section-label" lang="en">{english}</p><Tag id={id}>{title}</Tag>{rule && <div class="section-rule"></div>}</div>

@@ -1,0 +1,22 @@
+---
+import { siteConfig, asset } from '../config';
+import SocialLink from './SocialLink.astro';
+import Icon from './Icon.astro';
+---
+<section class="screen hero" id="hero" aria-labelledby="hero-title">
+  <svg class="hero-grid-lines" aria-hidden="true" width="100%" height="100%">
+    <defs><pattern id="hero-background-grid" x="50%" y="-1" width="200" height="200" patternUnits="userSpaceOnUse"><path d="M.5 200V.5H200" fill="none" /></pattern></defs>
+    <rect width="100%" height="100%" fill="url(#hero-background-grid)" stroke-width="0" />
+  </svg>
+  <div class="container screen-content hero-grid">
+    <div class="hero-intro">
+      <p class="hello">你好，</p>
+      <h1 id="hero-title">我是 <span>{siteConfig.name || '工程师'}</span></h1>
+      <p class="hero-role">{siteConfig.role}</p>
+      <p class="hero-statement">{siteConfig.statement}</p>
+      <div class="hero-actions"><SocialLink class="button button-primary" label="GitHub 主页" /><SocialLink kind="email" class="button button-secondary" label="联系我" /></div>
+      <div class="hero-social"><SocialLink class="icon-link" label="GitHub" /><SocialLink kind="email" class="icon-link" label="邮件联系" /></div>
+    </div>
+    <div class="identity-frame">{siteConfig.avatar ? <img class="portrait" src={asset(siteConfig.avatar)} alt="个人头像" width="1200" height="900" fetchpriority="high" /> : <div class="identity-art" aria-label="个人头像待补充"><div class="art-grid" aria-hidden="true"></div><div class="code-emblem"><Icon name="code" size={88} /></div></div>}</div>
+  </div>
+</section>

@@ -1,0 +1,2 @@
+<!-- 定义 favicon 的图形资源。 -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="19" fill="#3458ed"/><text x="13" y="48" font-family="Georgia,serif" font-size="55" font-style="italic" font-weight="bold" fill="white">e</text><path d="m48 6 3 7 7 3-7 3-3 7-3-7-7-3 7-3z" fill="#ffd66b"/></svg>

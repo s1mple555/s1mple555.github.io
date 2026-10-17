@@ -1,0 +1,76 @@
+---
+import { siteConfig, asset } from '../config';
+import '../styles/easystudy.css';
+const project = siteConfig.project1;
+---
+<section class="screen" id="project-1" data-nav-group="projects" aria-labelledby="project-1-title">
+  <span class="section-anchor" id="projects" aria-hidden="true"></span>
+  <div class="container screen-content easystudy-board">
+    <div class="easystudy-intro">
+      <div class="easystudy-brand">
+        <img src={asset('images/projects/easystudy/logo.svg')} width="40" height="40" alt="" />
+        <p>学习记录与交流<span lang="en">Learning community</span></p>
+      </div>
+      <div class="section-heading">
+        <p class="section-label" lang="en">Project 1</p>
+        <h2 id="project-1-title">{project.name}</h2>
+        <div class="section-rule"></div>
+      </div>
+      <p class="easystudy-tagline">{project.tagline}</p>
+      <p class="easystudy-summary">{project.summary}</p>
+      <ol class="easystudy-workflow" aria-label="学习过程">
+        {project.workflow.map((step) => <li>{step}</li>)}
+      </ol>
+      <ul class="easystudy-tech" aria-label="项目技术栈">{project.technology.map((technology) => <li>{technology}</li>)}</ul>
+      <div class="easystudy-actions">
+        <a class="button button-primary" href={project.site} target="_blank" rel="noopener noreferrer">访问 EasyStudy <span aria-hidden="true">↗</span></a>
+        <span class="easystudy-domain">easy-study.s1mple.top</span>
+      </div>
+    </div>
+    <div class="easystudy-explorer" data-easystudy-explorer>
+      <div class="easystudy-tabs" role="tablist" aria-label="项目总览与特色">
+        {project.features.map((feature, index) => <button type="button" role="tab" id={'easystudy-tab-' + feature.id} aria-controls={'easystudy-panel-' + feature.id} aria-selected={index === 0 ? 'true' : 'false'} tabindex={index === 0 ? 0 : -1}>
+          <span>{feature.title}</span><small lang="en">{feature.english}</small>
+        </button>)}
+      </div>
+      <div class="easystudy-panels">
+        {project.features.map((feature, index) => <div class="easystudy-panel" role="tabpanel" id={'easystudy-panel-' + feature.id} aria-labelledby={'easystudy-tab-' + feature.id} tabindex="0" hidden={index !== 0}>
+          <figure class="easystudy-feature-image">
+            <img src={asset(feature.src)} alt={feature.alt} width={feature.width} height={feature.height} loading="lazy" decoding="async" />
+          </figure>
+          <div class="easystudy-feature-copy">
+            <h3>{feature.headline}</h3>
+            <p>{feature.description}</p>
+          </div>
+        </div>)}
+      </div>
+      <p class="easystudy-demo-note">基于实际功能界面，内容为演示数据。<span lang="en">Product demo</span></p>
+    </div>
+  </div>
+</section>
+<script>
+  const explorer = document.querySelector<HTMLElement>('[data-easystudy-explorer]');
+  const tabs = [...(explorer?.querySelectorAll<HTMLButtonElement>('[role="tab"]') || [])];
+  const panels = [...(explorer?.querySelectorAll<HTMLElement>('[role="tabpanel"]') || [])];
+  function selectFeature(index: number, focus = false) {
+    if (!tabs[index]) return;
+    tabs.forEach((tab, current) => {
+      tab.setAttribute('aria-selected', String(current === index));
+      tab.tabIndex = current === index ? 0 : -1;
+      if (panels[current]) panels[current].hidden = current !== index;
+    });
+    if (focus) tabs[index].focus({ preventScroll: true });
+  }
+  tabs.forEach((tab, index) => {
+    tab.addEventListener('pointerenter', (event) => {
+      if (event.pointerType === 'mouse') selectFeature(index);
+    });
+    tab.addEventListener('click', () => selectFeature(index));
+    tab.addEventListener('keydown', (event) => {
+      if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+      event.preventDefault();
+      const next = event.key === 'Home' ? 0 : event.key === 'End' ? tabs.length - 1 : (index + (event.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length;
+      selectFeature(next, true);
+    });
+  });
+</script>

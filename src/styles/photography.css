@@ -1,0 +1,66 @@
+/* Fixed-height photographs use one synchronized width-and-scroll animation. */
+.photo-content { display:flex; flex-direction:column; gap:25px; }
+.photo-heading { align-items:end; }
+.photo-description { margin-top:14px; color:var(--copy); font-size:15px; line-height:1.8; }
+.photo-toolbar { display:flex; align-items:center; justify-content:flex-end; gap:28px; padding-bottom:4px; }
+.photo-current { display:flex; align-items:center; gap:25px; font-size:13px; color:var(--copy); }
+#photo-count { font-variant-numeric:tabular-nums; white-space:nowrap; }
+.photo-controls { display:flex; gap:9px; }
+.photo-arrow { display:grid; place-items:center; width:44px; height:44px; flex-shrink:0; border:1px solid #d4dce7; border-radius:50%; background:#fff; color:#46536b; transition:background .2s,color .2s,border-color .2s; }
+.photo-arrow:hover { background:var(--blue); border-color:var(--blue); color:#fff; }
+.photo-previous svg { transform:rotate(180deg); }
+.photo-gallery { --photo-collapsed:.04; --photo-expanded:.45; position:relative; display:flex; gap:9px; height:clamp(230px,52svh,550px); min-height:0; flex-shrink:0; overflow-x:auto; overflow-y:hidden; scrollbar-width:none; overscroll-behavior-x:contain; overflow-anchor:none; scroll-behavior:auto; touch-action:pan-y; border-radius:11px; }
+.photo-gallery::-webkit-scrollbar { display:none; }
+.photo-tile { position:relative; min-width:0; flex:0 0 4%; overflow:hidden; border-radius:10px; }
+.photo-tile.is-active { flex-basis:45%; }
+.photo-select { position:relative; display:block; width:100%; height:100%; padding:0; background:transparent; }
+.photo-select img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center; }
+.photo-select:focus-visible { outline-offset:-5px; }
+.athletics-content { align-items:center; }
+.athletics-description { margin-top:22px; max-width:340px; font-size:15px; color:var(--copy); line-height:1.85; text-wrap:pretty; }
+.athletics-description > span { display:block; }
+.athletics-achievements { display:grid; gap:15px; margin-top:24px; }
+.athletics-achievements li { display:grid; grid-template-columns:55px minmax(0,1fr); gap:13px; align-items:start; }
+.athletics-year { padding-top:2px; font-size:11px; font-variant-numeric:tabular-nums; color:#8390a2; }
+.athletics-achievements li p { color:#667085; font-size:12px; line-height:1.6; }
+.athletics-achievements strong { display:block; margin-top:3px; font-size:14px; line-height:1.5; font-weight:600; }
+.athletics-gallery { --athletics-radius:16px; min-width:0; }
+.athletics-viewport { overflow:hidden; aspect-ratio:8/5; border-radius:var(--athletics-radius); touch-action:pan-y; }
+.athletics-track { display:flex; height:100%; transition:transform .35s cubic-bezier(.22,.61,.36,1); }
+.athletics-photo { display:flex; align-items:center; justify-content:center; flex:0 0 100%; min-width:0; height:100%; overflow:hidden; }
+.athletics-photo img { width:auto; height:auto; max-width:100%; max-height:100%; object-fit:contain; border-radius:var(--athletics-radius); }
+.athletics-toolbar { display:flex; justify-content:space-between; align-items:center; gap:16px; margin-top:14px; }
+.athletics-count { color:var(--copy); font-size:12px; font-variant-numeric:tabular-nums; }
+.athletics-toolbar .photo-arrow:disabled { opacity:.35; cursor:default; background:#fff; border-color:#d4dce7; color:#46536b; }
+@media (max-width:859px) {
+  .photo-heading { grid-template-columns:1fr; gap:22px; }
+  .photo-toolbar { justify-content:space-between; padding:0; }
+  .photo-current { flex:1; justify-content:space-between; gap:15px; }
+  .photo-gallery { --photo-collapsed:.07; --photo-expanded:.64; height:49svh; gap:7px; }
+  .photo-tile { flex-basis:7%; }
+  .photo-tile.is-active { flex-basis:64%; }
+  .athletics-content { gap:30px; }
+  .athletics-description { max-width:none; font-size:14px; margin-top:20px; }
+  .athletics-achievements { margin-top:20px; gap:12px; }
+}
+@media (max-width:579px) {
+  .photo-content { gap:18px; }
+  .photo-heading { gap:19px; }
+  .photo-heading h2 { font-size:30px; }
+  .photo-toolbar { gap:16px; }
+  .photo-current { font-size:11px; }
+  .photo-controls { gap:7px; }
+  .photo-gallery { --photo-collapsed:.08; --photo-expanded:.78; height:47svh; min-height:200px; border-radius:8px; }
+  .photo-tile { flex-basis:8%; border-radius:8px; }
+  .photo-tile.is-active { flex-basis:78%; }
+  .athletics-gallery { --athletics-radius:10px; }
+  .athletics-toolbar { margin-top:10px; }
+  .athletics-toolbar .photo-arrow { width:38px; height:38px; }
+}
+@media (max-height:650px) {
+  .photo-content { gap:18px; }
+  .photo-gallery { height:43svh; min-height:150px; }
+}
+@media (max-height:650px) and (min-width:860px) {
+  .athletics-viewport { aspect-ratio:16/9; }
+}

@@ -1,0 +1,12 @@
+---
+import { siteConfig } from '../config';
+import Icon from './Icon.astro';
+interface Props { kind?: 'github' | 'email'; label?: string; class?: string; }
+const { kind = 'github', label = 'GitHub', class: className = '' } = Astro.props;
+const href = kind === 'github' ? siteConfig.github : siteConfig.email ? `mailto:${siteConfig.email}` : '';
+---
+{href && (
+  <a href={href} class={className} aria-label={label} target={kind === 'github' ? '_blank' : undefined} rel={kind === 'github' ? 'noopener noreferrer' : undefined}>
+    <Icon name={kind === 'github' ? 'github' : 'mail'} size={18} /><span>{label}</span>{kind === 'github' && <Icon name="arrow" size={15} />}
+  </a>
+)}

@@ -1,0 +1,86 @@
+---
+import { siteConfig, asset } from '../config';
+import Icon from './Icon.astro';
+import SectionHeading from './SectionHeading.astro';
+
+const athletics = siteConfig.athletics;
+---
+<section class="screen" id="athletics" data-nav-group="hobbies" aria-labelledby="athletics-title">
+  <div class="container screen-content section-grid athletics-content">
+    <div>
+      <SectionHeading title="田径" english="Athletics" id="athletics-title" />
+      <p class="athletics-description"><span>{athletics.description}</span><span>{athletics.passion}</span></p>
+      <ul class="athletics-achievements" aria-label="田径代表成绩">
+        {athletics.achievements.map((achievement) => (
+          <li>
+            <span class="athletics-year">{achievement.year}</span>
+            <div><p>{achievement.event}</p><strong>{achievement.result}</strong></div>
+          </li>
+        ))}
+      </ul>
+    </div>
+    <div class="athletics-gallery" data-athletics-gallery role="region" aria-roledescription="轮播" aria-label="田径相册">
+      <div class="athletics-viewport" id="athletics-slides" tabindex="0" aria-label="田径照片，可用左右方向键切换">
+        <div class="athletics-track">
+          {athletics.photos.map((photo, index) => (
+            <figure class="athletics-photo" role="group" aria-roledescription="幻灯片" aria-label={(index + 1) + ' / ' + athletics.photos.length} aria-hidden={index !== 0 ? 'true' : 'false'}>
+              <img src={asset(photo.src)} alt={photo.alt} width={photo.width} height={photo.height} loading="lazy" decoding="async" draggable="false" />
+            </figure>
+          ))}
+        </div>
+      </div>
+      <div class="athletics-toolbar">
+        <p class="athletics-count" aria-live="polite" aria-atomic="true">01 / {String(athletics.photos.length).padStart(2, '0')}</p>
+        <div class="photo-controls">
+          <button class="photo-arrow photo-previous" type="button" data-athletics-step="-1" aria-label="上一张田径照片" aria-controls="athletics-slides" disabled><Icon name="chevron" /></button>
+          <button class="photo-arrow" type="button" data-athletics-step="1" aria-label="下一张田径照片" aria-controls="athletics-slides" disabled={athletics.photos.length < 2}><Icon name="chevron" /></button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <footer class="screen-footer container"><span>© {new Date().getFullYear()} {siteConfig.name || '开发者'}. Built with Astro.</span><a href="#hero">回到顶部 ↑</a></footer>
+</section>
+<script>
+  const athleticsGallery = document.querySelector<HTMLElement>('[data-athletics-gallery]');
+  if (athleticsGallery) {
+    const viewport = athleticsGallery.querySelector<HTMLElement>('.athletics-viewport');
+    const track = athleticsGallery.querySelector<HTMLElement>('.athletics-track');
+    const slides = [...athleticsGallery.querySelectorAll<HTMLElement>('.athletics-photo')];
+    const count = athleticsGallery.querySelector<HTMLElement>('.athletics-count');
+    const controls = [...athleticsGallery.querySelectorAll<HTMLButtonElement>('[data-athletics-step]')];
+    let current = 0;
+
+    function selectSlide(index: number) {
+      if (!slides.length || !track) return;
+      current = Math.max(0, Math.min(index, slides.length - 1));
+      track.style.transform = `translateX(${-current * 100}%)`;
+      slides.forEach((slide, position) => slide.setAttribute('aria-hidden', String(position !== current)));
+      controls.forEach((button) => { button.disabled = Number(button.dataset.athleticsStep) < 0 ? current === 0 : current === slides.length - 1; });
+      if (count) count.textContent = `${String(current + 1).padStart(2, '0')} / ${String(slides.length).padStart(2, '0')}`;
+    }
+
+    controls.forEach((button) => {
+      button.addEventListener('click', () => selectSlide(current + Number(button.dataset.athleticsStep)));
+    });
+    viewport?.addEventListener('keydown', (event) => {
+      if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+      event.preventDefault();
+      selectSlide(event.key === 'Home' ? 0 : event.key === 'End' ? slides.length - 1 : current + (event.key === 'ArrowRight' ? 1 : -1));
+    });
+
+    let touchStart: { x: number; y: number; id: number } | undefined;
+    viewport?.addEventListener('pointerdown', (event) => {
+      if (event.pointerType === 'mouse' || !event.isPrimary) return;
+      touchStart = { x: event.clientX, y: event.clientY, id: event.pointerId };
+      viewport.setPointerCapture(event.pointerId);
+    });
+    viewport?.addEventListener('pointerup', (event) => {
+      if (!touchStart || touchStart.id !== event.pointerId) return;
+      const dx = event.clientX - touchStart.x;
+      const dy = event.clientY - touchStart.y;
+      touchStart = undefined;
+      if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.4) selectSlide(current + (dx < 0 ? 1 : -1));
+    });
+    viewport?.addEventListener('pointercancel', () => { touchStart = undefined; });
+  }
+</script>

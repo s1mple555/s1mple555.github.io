@@ -1,0 +1,95 @@
+.easystudy-board { display:grid; grid-template-columns:minmax(235px,.87fr) minmax(0,1.92fr); gap:34px; align-items:center; padding:24px 0; border:0; background:transparent; }
+.easystudy-intro,.easystudy-explorer { min-width:0; }
+.easystudy-explorer { width:100%; max-width:655px; justify-self:end; }
+.easystudy-brand { display:flex; gap:11px; align-items:center; margin-bottom:22px; }
+.easystudy-brand img { border-radius:12px; }
+.easystudy-brand p { color:#475569; font-size:12px; line-height:1.7; }
+.easystudy-brand p span { display:block; color:#97a1b0; font-size:10px; }
+.easystudy-intro .section-label { margin-bottom:8px; letter-spacing:1px; }
+.easystudy-intro .section-heading h2 { font-size:clamp(36px,4.4vw,54px); letter-spacing:-2.2px; }
+.easystudy-intro .section-rule { width:48px; height:4px; margin-top:12px; }
+.easystudy-tagline { margin-top:20px; color:var(--blue); font-size:17px; font-weight:600; line-height:1.7; }
+.easystudy-summary { margin-top:12px; color:var(--copy); font-size:14px; line-height:1.85; }
+.easystudy-workflow { display:flex; align-items:center; padding:0; margin:17px 0 0; list-style:none; color:#475569; font-size:11px; }
+.easystudy-workflow li { display:flex; align-items:center; gap:8px; }
+.easystudy-workflow li:not(:last-child)::after { content:'→'; color:#a7b4c8; margin-right:8px; }
+.easystudy-tech { display:flex; flex-wrap:wrap; gap:5px; margin-top:13px; }
+.easystudy-tech li { padding:4px 6px; border:1px solid transparent; border-radius:4px; color:#758298; font-size:9px; line-height:1.4; }
+.easystudy-actions { display:grid; justify-items:start; gap:9px; margin-top:21px; }
+.easystudy-actions .button { font-size:12px; min-height:40px; padding:10px 16px; }
+.easystudy-domain { color:#8d99ac; font-size:10px; overflow-wrap:anywhere; }
+.easystudy-tabs { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:3px; padding:4px; border:1px solid transparent; border-radius:10px; background:#f0f4fa; }
+.easystudy-tabs button { min-width:0; padding:9px 2px 8px; border-radius:7px; background:transparent; color:#56667f; text-align:center; transition:background .15s,color .15s; }
+.easystudy-tabs button > span { display:block; font-size:12px; font-weight:600; white-space:nowrap; line-height:1.4; }
+.easystudy-tabs button > small { display:block; font-size:8px; white-space:nowrap; margin-top:4px; line-height:1.2; }
+.easystudy-tabs button:hover { color:var(--blue); }
+.easystudy-tabs button[aria-selected="true"] { background:#fff; color:var(--blue); box-shadow:0 1px 4px #1b3b7114; }
+.easystudy-panels { display:grid; margin-top:10px; overflow:hidden; border:1px solid transparent; border-radius:12px; background:#fff; }
+.easystudy-panel { grid-area:1 / 1; outline-offset:-3px; }
+/* Reserve room for the longest description without moving the selected panel. */
+.easystudy-panel[hidden] { display:block!important; visibility:hidden; pointer-events:none; }
+.easystudy-feature-image { position:relative; display:flex; align-items:center; justify-content:center; width:min(86%,544px); min-height:0; margin:14px auto 0; aspect-ratio:2.2; overflow:hidden; border:1px solid transparent; border-radius:8px; background:#f5f7fb; }
+.easystudy-feature-image img { position:absolute; inset:0; width:100%; height:100%; object-fit:contain; }
+.easystudy-feature-copy { min-height:99px; padding:15px 18px 16px; }
+.easystudy-feature-copy h3 { color:#26364d; font-size:15px; line-height:1.5; font-weight:600; }
+.easystudy-feature-copy p { margin-top:7px; color:var(--copy); font-size:12px; line-height:1.8; }
+.easystudy-demo-note { display:flex; justify-content:space-between; gap:8px; margin-top:10px; padding-inline:2px; color:#667085; font-size:10px; line-height:1.5; }
+.easystudy-demo-note span { white-space:nowrap; }
+@media (min-width:1440px) {
+  .easystudy-board { padding:28px 0; gap:40px; }
+  .easystudy-summary { font-size:14px; }
+  .easystudy-tagline { font-size:18px; }
+  .easystudy-feature-copy h3 { font-size:16px; }
+  .easystudy-feature-copy p { font-size:13px; }
+}
+@media (max-width:1000px) and (min-width:860px) {
+  .easystudy-board { padding:22px 0; gap:22px; grid-template-columns:minmax(215px,.8fr) minmax(0,1.6fr); }
+  .easystudy-tabs button > small { font-size:7px; }
+  .easystudy-tabs button > span { font-size:11px; }
+  .easystudy-feature-copy { min-height:115px; }
+}
+@media (max-width:859px) {
+  .easystudy-board { grid-template-columns:minmax(0,1fr); gap:21px; padding:24px 0; }
+  .easystudy-explorer { max-width:none; }
+  .easystudy-brand { display:none; }
+  .easystudy-intro .section-heading { position:relative; }
+  .easystudy-intro .section-rule { margin-top:10px; }
+  .easystudy-tagline { margin-top:14px; }
+  .easystudy-summary { margin-top:8px; }
+  .easystudy-workflow,.easystudy-tech { display:none; }
+  .easystudy-actions { display:flex; align-items:center; flex-wrap:wrap; gap:12px; margin-top:14px; }
+  .easystudy-feature-copy { min-height:100px; }
+  .easystudy-feature-image { width:100%; margin:0; aspect-ratio:1.95; border:0; border-bottom:1px solid transparent; border-radius:0; }
+}
+@media (max-width:579px) {
+  .easystudy-board { padding:17px 0; gap:16px; }
+  .easystudy-intro .section-heading h2 { font-size:35px; letter-spacing:-1.3px; }
+  .easystudy-intro .section-label { font-size:8px; margin-bottom:5px; }
+  .easystudy-intro .section-rule { display:none; }
+  .easystudy-tagline { margin-top:11px; font-size:14px; }
+  .easystudy-summary { font-size:11px; line-height:1.8; }
+  .easystudy-actions .button { font-size:11px; min-height:35px; padding:8px 12px; }
+  .easystudy-domain { font-size:9px; }
+  .easystudy-tabs { grid-template-columns:repeat(3,minmax(0,1fr)); gap:3px; padding:3px; }
+  .easystudy-tabs button { padding:7px 2px 6px; }
+  .easystudy-tabs button > span { font-size:11px; }
+  .easystudy-tabs button > small { font-size:7px; margin-top:2px; }
+  .easystudy-panels { margin-top:10px; border-radius:9px; }
+  .easystudy-feature-copy { min-height:113px; padding:12px; }
+  .easystudy-feature-copy h3 { font-size:12px; }
+  .easystudy-feature-copy p { font-size:11px; line-height:1.75; margin-top:6px; }
+  .easystudy-demo-note { font-size:10px; margin-top:7px; }
+}
+@media (max-height:650px) and (min-width:860px) {
+  .easystudy-board { padding:20px 0; }
+  .easystudy-brand { margin-bottom:13px; }
+  .easystudy-brand img { width:32px; height:32px; }
+  .easystudy-intro .section-heading h2 { font-size:44px; }
+  .easystudy-tagline { margin-top:14px; font-size:15px; }
+  .easystudy-summary { font-size:12px; }
+  .easystudy-workflow { margin-top:12px; }
+  .easystudy-tech { margin-top:10px; }
+  .easystudy-actions { margin-top:14px; }
+  .easystudy-feature-image { aspect-ratio:auto; height:clamp(128px,calc(85svh - 306px),247px); }
+  .easystudy-feature-copy { min-height:98px; padding:12px 15px; }
+}

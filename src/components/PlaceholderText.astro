@@ -1,0 +1,5 @@
+---
+interface Props { lines?: number; class?: string; }
+const { lines = 2, class: className = '' } = Astro.props;
+---
+<span class:list={['text-placeholder', className]} aria-hidden="true">{Array.from({ length: lines }, (_, index) => <span style={{ width: index === lines - 1 ? '64%' : '100%' }}></span>)}</span>

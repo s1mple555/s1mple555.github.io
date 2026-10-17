@@ -1,0 +1,150 @@
+---
+import { siteConfig, asset } from '../config';
+import Icon from './Icon.astro';
+import SectionHeading from './SectionHeading.astro';
+import '../styles/photography.css';
+
+const photos = siteConfig.photographs;
+---
+<section class="screen" id="photography" data-nav-group="hobbies" aria-labelledby="photography-title">
+  <span id="hobbies" class="section-anchor" aria-hidden="true"></span>
+  <div class="container screen-content photo-content">
+    <div class="section-grid photo-heading">
+      <div class="photo-intro">
+        <SectionHeading title="摄影与创作" english="Photography" id="photography-title" />
+        <p class="photo-description">我喜欢用相机，记录下生活中的美好。</p>
+      </div>
+      <div class="photo-toolbar">
+        <p class="photo-current"><span>风景 / <span lang="en">Landscapes</span></span><span id="photo-count" aria-live="polite" aria-atomic="true">01 / {photos.length}</span></p>
+        <div class="photo-controls">
+          <button class="photo-arrow photo-previous" type="button" data-gallery-step="-1" aria-label="上一张照片" aria-controls="photo-gallery"><Icon name="chevron" /></button>
+          <button class="photo-arrow" type="button" data-gallery-step="1" aria-label="下一张照片" aria-controls="photo-gallery"><Icon name="chevron" /></button>
+        </div>
+      </div>
+    </div>
+    <div class="photo-gallery" id="photo-gallery" role="region" aria-roledescription="轮播" aria-label="摄影画廊" tabindex="0">
+      {photos.map((photo, index) => (
+        <article class:list={['photo-tile', { 'is-active': index === 0 }]} data-display-ratio={'displayRatio' in photo ? photo.displayRatio : undefined}>
+          <button type="button" class="photo-select" aria-pressed={index === 0 ? 'true' : 'false'} tabindex={index === 0 ? 0 : -1} aria-label={'选择风景照片 ' + (index + 1)}>
+            <img src={asset(photo.src)} alt={photo.alt} width={photo.width} height={photo.height} loading="lazy" decoding="async" draggable="false" />
+          </button>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+<script>
+  const gallery = document.querySelector<HTMLElement>('#photo-gallery');
+  const tiles = Array.from(document.querySelectorAll<HTMLElement>('.photo-tile'));
+  const count = document.querySelector<HTMLElement>('#photo-count');
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const indices = new Map(tiles.map((tile, index) => [tile, index]));
+  let current = 0;
+  let animationFrame = 0;
+
+  function targetLayout() {
+    if (!gallery) return { widths: [], scroll: 0 };
+    const style = getComputedStyle(gallery);
+    const collapsed = Number(style.getPropertyValue('--photo-collapsed')) || .04;
+    const expanded = Number(style.getPropertyValue('--photo-expanded')) || .45;
+    const gap = parseFloat(style.columnGap) || 0;
+    const image = tiles[current]?.querySelector('img');
+    const displayRatio = Number(tiles[current]?.dataset.displayRatio);
+    const ratio = displayRatio > 0 ? displayRatio : image ? Number(image.getAttribute('width')) / Number(image.getAttribute('height')) : 1;
+    // Portraits keep their natural width at the common gallery height.
+    const activeWidth = ratio < 1
+      ? Math.min(gallery.clientHeight * ratio, gallery.clientWidth)
+      : gallery.clientWidth * expanded;
+    const widths = tiles.map((_, index) => index === current ? activeWidth : gallery.clientWidth * collapsed);
+    const before = widths.slice(0, current).reduce((total, width) => total + width + gap, 0);
+    const total = widths.reduce((sum, width) => sum + width, 0) + gap * (tiles.length - 1);
+    const centered = before - (gallery.clientWidth - activeWidth) / 2;
+    return { widths, scroll: Math.max(0, Math.min(centered, total - gallery.clientWidth)) };
+  }
+
+  function moveToCurrent(animate: boolean) {
+    if (!gallery) return;
+    cancelAnimationFrame(animationFrame);
+    const target = targetLayout();
+    const fromWidths = tiles.map((tile) => tile.getBoundingClientRect().width);
+    const fromScroll = gallery.scrollLeft;
+    const started = performance.now();
+    const duration = animate && !reducedMotion.matches ? 360 : 0;
+    // One timeline controls both widths and scroll; there is no second recenter.
+    function frame(now: number) {
+      if (!gallery) return;
+      const progress = duration ? Math.min(1, (now - started) / duration) : 1;
+      const eased = 1 - Math.pow(1 - progress, 3);
+      tiles.forEach((tile, index) => {
+        tile.style.flexBasis = `${fromWidths[index] + (target.widths[index] - fromWidths[index]) * eased}px`;
+      });
+      gallery.scrollLeft = fromScroll + (target.scroll - fromScroll) * eased;
+      if (progress < 1) animationFrame = requestAnimationFrame(frame);
+    }
+    if (duration) animationFrame = requestAnimationFrame(frame);
+    else frame(started);
+  }
+
+  function selectPhoto(index: number) {
+    if (!tiles.length) return;
+    const next = (index + tiles.length) % tiles.length;
+    if (next === current) return;
+    current = next;
+    tiles.forEach((tile, tileIndex) => {
+      const active = tileIndex === current;
+      tile.classList.toggle('is-active', active);
+      const button = tile.querySelector<HTMLButtonElement>('.photo-select');
+      button?.setAttribute('aria-pressed', String(active));
+      if (button) button.tabIndex = active ? 0 : -1;
+    });
+    if (count) count.textContent = `${String(current + 1).padStart(2, '0')} / ${tiles.length}`;
+    moveToCurrent(true);
+  }
+
+  tiles.forEach((tile, index) => tile.querySelector('.photo-select')?.addEventListener('click', () => selectPhoto(index)));
+  document.querySelectorAll<HTMLButtonElement>('[data-gallery-step]').forEach((button) => {
+    button.addEventListener('click', () => selectPhoto(current + Number(button.dataset.galleryStep)));
+  });
+  gallery?.addEventListener('keydown', (event) => {
+    if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+    event.preventDefault();
+    selectPhoto(current + (event.key === 'ArrowRight' ? 1 : -1));
+  });
+  if (gallery) {
+    let start: { x: number; y: number; id: number } | undefined;
+    let lastMouse: { x: number; y: number } | undefined;
+    let suppressClick = false;
+    // Respond to real mouse movement, not to tiles sliding beneath a still pointer.
+    gallery.addEventListener('pointermove', (event) => {
+      if (event.pointerType !== 'mouse' || event.buttons) return;
+      const moved = !lastMouse || Math.abs(event.clientX - lastMouse.x) + Math.abs(event.clientY - lastMouse.y) > 1;
+      if (!moved) return;
+      lastMouse = { x: event.clientX, y: event.clientY };
+      const tile = event.target instanceof Element ? event.target.closest<HTMLElement>('.photo-tile') : null;
+      const index = tile ? indices.get(tile) : undefined;
+      if (index !== undefined) selectPhoto(index);
+    });
+    gallery.addEventListener('pointerleave', () => { lastMouse = undefined; });
+    gallery.addEventListener('pointerdown', (event) => {
+      suppressClick = false;
+      if (event.pointerType !== 'mouse') start = { x: event.clientX, y: event.clientY, id: event.pointerId };
+    });
+    gallery.addEventListener('pointerup', (event) => {
+      if (!start || start.id !== event.pointerId) return;
+      const dx = event.clientX - start.x;
+      const dy = event.clientY - start.y;
+      start = undefined;
+      if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.4) {
+        suppressClick = true;
+        selectPhoto(current + (dx < 0 ? 1 : -1));
+      }
+    });
+    gallery.addEventListener('pointercancel', () => { start = undefined; });
+    gallery.addEventListener('click', (event) => {
+      if (!suppressClick) return;
+      event.preventDefault(); event.stopPropagation(); suppressClick = false;
+    }, true);
+    moveToCurrent(false);
+  }
+  window.addEventListener('resize', () => moveToCurrent(false));
+</script>
