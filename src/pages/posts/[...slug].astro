@@ -16,11 +16,31 @@ const { Content, headings } = await render(post.entry);
 const toc = headings.filter((heading) => heading.depth === 2 || heading.depth === 3);
 ---
 <BaseLayout page="posts" title={post.title + ' | 帖子 / Posts'} description={post.description}>
-  <div class="article-shell container">
+  <div class:list={['article-shell', 'container', { 'has-toc': toc.length > 0 }]}>
     <a class="article-back" href={asset('posts/')}>← 帖子 <span lang="en">/ Posts</span></a>
-    <header class="article-header"><p class="section-label" lang="en">Post</p><h1>{post.title}</h1><div class="article-meta">{post.date && <time datetime={post.date.toISOString()}>{formatPostDate(post.date)}</time>}{post.updated && <span>更新 / Updated {formatPostDate(post.updated)}</span>}<span class="post-category">{post.category}</span>{post.tags.length > 0 && <ul class="post-tags" aria-label="标签">{post.tags.map((tag) => <li>{tag}</li>)}</ul>}</div></header>
-    <div class:list={['article-grid', { 'has-toc': toc.length > 0 }]}><article class:list={['post-body', { 'has-leading-title': post.hasLeadingTitle }]}><Content /></article>{toc.length > 0 && <aside class="article-sidebar"><details class="article-toc" open><summary>目录 <span lang="en">/ Contents</span></summary><ol>{toc.map((heading) => <li class:list={{ 'toc-nested': heading.depth === 3 }}><a href={'#' + heading.slug}>{heading.text}</a></li>)}</ol></details></aside>}</div>
+    <header class="article-header">
+      <h1 id="post-title">{post.title}</h1>
+      <div class="article-meta">{post.date && <time datetime={post.date.toISOString()}>{formatPostDate(post.date)}</time>}{post.updated && <span>更新 / Updated {formatPostDate(post.updated)}</span>}<span class="post-category">{post.category}</span>{post.tags.length > 0 && <ul class="post-tags" aria-label="标签">{post.tags.map((tag) => <li>{tag}</li>)}</ul>}</div>
+    </header>
+    <div class="article-grid">
+      {toc.length > 0 && <aside class="article-sidebar" aria-label="文章目录">
+        <details class="article-toc" open>
+          <summary>目录 <span lang="en">/ Contents</span></summary>
+          <ol>{toc.map((heading) => <li class:list={{ 'toc-nested': heading.depth === 3 }}><a href={'#' + heading.slug}>{heading.text}</a></li>)}</ol>
+        </details>
+      </aside>}
+      <article class:list={['post-body', { 'has-leading-title': post.hasLeadingTitle }]} aria-labelledby="post-title"><Content /></article>
+    </div>
     <a class="article-end-link" href={asset('posts/')}>← 返回帖子 <span lang="en">/ Back to posts</span></a>
     <ReadingFooter />
   </div>
 </BaseLayout>
+<script>
+  const toc = document.querySelector<HTMLDetailsElement>('.article-toc');
+  if (toc) {
+    const desktop = window.matchMedia('(min-width: 860px)');
+    const syncContents = () => { toc.open = desktop.matches; };
+    syncContents();
+    desktop.addEventListener('change', syncContents);
+  }
+</script>

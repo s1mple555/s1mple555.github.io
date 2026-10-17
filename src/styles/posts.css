@@ -2,8 +2,7 @@
 html[data-page="posts"] { scroll-snap-type:none; scroll-padding-top:100px; }
 /* Keep the grid in the outer margins, clear of the reading column. */
 html[data-page="posts"] body::before { opacity:.45; mask-image:linear-gradient(to right,#000,transparent calc(50% - 580px),transparent calc(50% + 580px),#000); }
-.posts-shell,.article-shell { max-width:1080px; padding-top:130px; padding-bottom:26px; }
-.posts-shell { min-height:100svh; display:flex; flex-direction:column; padding-top:112px; }
+.posts-shell { max-width:1080px; min-height:100svh; display:flex; flex-direction:column; padding-top:112px; padding-bottom:26px; }
 .posts-masthead { display:flex; align-items:flex-end; justify-content:space-between; gap:24px; padding-bottom:22px; }
 .posts-masthead h1 { font-size:56px; line-height:1.2; letter-spacing:-2px; }
 .posts-count { color:#8993a3; font-size:12px; padding-bottom:3px; white-space:nowrap; }
@@ -51,19 +50,19 @@ html[data-page="posts"] body::before { opacity:.45; mask-image:linear-gradient(t
 .page-ellipsis { padding-inline:0; min-width:20px; }
 
 /* Article pages: readable prose, code, tables, and an optional quiet contents rail. */
+.article-shell.container { max-width:760px; padding-top:88px; padding-bottom:26px; }
 .article-back,.article-end-link { display:inline-flex; gap:6px; color:#74839b; font-size:12px; }
 .article-back:hover,.article-end-link:hover { color:var(--blue); }
-.article-header { padding:40px 0 33px; border-bottom:1px solid var(--line); }
-.article-header .section-label { color:#8b98ad; }
-.article-header h1 { font-size:clamp(30px,3.8vw,46px); line-height:1.45; font-weight:650; letter-spacing:-1px; max-width:860px; overflow-wrap:anywhere; }
-.article-meta { display:flex; align-items:center; flex-wrap:wrap; gap:14px 24px; color:#8b97aa; font-size:11px; margin-top:23px; }
-.article-grid { padding-top:38px; }
-.article-grid.has-toc { display:grid; grid-template-columns:minmax(0,760px) 180px; gap:65px; align-items:start; }
+.article-header { padding:14px 0 18px; border-bottom:1px solid var(--line); }
+.article-header h1 { font-size:clamp(29px,3.2vw,38px); line-height:1.3; font-weight:650; letter-spacing:-1px; overflow-wrap:anywhere; }
+.article-meta { display:flex; align-items:center; flex-wrap:wrap; gap:8px 18px; color:#8b97aa; font-size:11px; margin-top:12px; }
+.article-grid { display:grid; gap:20px; padding-top:24px; }
 .post-body { max-width:760px; min-width:0; color:#465267; font-size:16px; line-height:1.95; overflow-wrap:anywhere; }
 .post-body.has-leading-title > h1:first-child { display:none; }
 .post-body > :first-child { margin-top:0; }
+.post-body.has-leading-title > h1:first-child + * { margin-top:0; }
 .post-body p,.post-body ul,.post-body ol,.post-body blockquote,.post-body pre,.post-body table { margin-top:19px; margin-bottom:19px; }
-.post-body h1,.post-body h2,.post-body h3,.post-body h4 { color:var(--ink); line-height:1.55; font-weight:600; scroll-margin-top:95px; }
+.post-body h1,.post-body h2,.post-body h3,.post-body h4 { color:var(--ink); line-height:1.55; font-weight:600; }
 .post-body h1,.post-body h2 { font-size:27px; margin:43px 0 17px; letter-spacing:-.6px; }
 .post-body h3 { font-size:21px; margin:33px 0 15px; }
 .post-body h4 { font-size:18px; margin:26px 0 12px; }
@@ -79,9 +78,8 @@ html[data-page="posts"] body::before { opacity:.45; mask-image:linear-gradient(t
 .post-body table { display:block; max-width:100%; width:max-content; overflow-x:auto; border-collapse:collapse; font-size:14px; }
 .post-body th,.post-body td { padding:10px 16px; border:1px solid var(--line); text-align:left; }
 .post-body th { background:#f8fafc; color:#43516a; }
-.post-body img { height:auto; max-width:100%; border-radius:9px; }
+.post-body img { display:block; width:auto; height:auto; max-width:100%; max-height:min(560px,70svh); object-fit:contain; margin-inline:auto; border-radius:9px; }
 .post-body hr { border:0; border-top:1px solid var(--line); margin:34px 0; }
-.article-sidebar { position:sticky; top:100px; }
 .article-toc summary { font-size:12px; font-weight:500; color:#556580; }
 .article-toc summary span { color:#96a1b2; font-size:10px; font-weight:400; }
 .article-toc ol { margin-top:17px; list-style:none; padding:0; border-left:1px solid var(--line); }
@@ -89,22 +87,21 @@ html[data-page="posts"] body::before { opacity:.45; mask-image:linear-gradient(t
 .article-toc li.toc-nested { padding-left:25px; }
 .article-toc a:hover { color:var(--blue); }
 .article-end-link { margin-top:45px; }
-@media (max-width:1100px) { .article-grid.has-toc { grid-template-columns:minmax(0,1fr) 150px; gap:35px; } }
+@media (min-width:860px) {
+  /* Reserve a clear gutter even on small desktops; the rail follows the viewport edge. */
+  .article-shell.has-toc { width:min(760px,calc(100% - 288px)); margin-left:max(40px,calc((100% - 1080px)/2)); margin-right:auto; }
+  .article-sidebar { position:fixed; top:100px; right:20px; width:188px; max-height:calc(100svh - 124px); overflow-y:auto; scrollbar-width:thin; background:#fffffff0; border-radius:8px; padding:12px; }
+}
 @media (max-width:859px) {
   .posts-shell { padding-top:92px; }
-  .article-shell { padding-top:105px; }
+  .article-shell.container { padding-top:82px; }
   .posts-masthead h1 { font-size:44px; }
-  .article-grid.has-toc { display:flex; flex-direction:column; gap:25px; }
-  .article-sidebar { order:-1; position:static; width:100%; }
-  .article-toc { border-bottom:1px solid var(--line); padding-bottom:20px; }
-  .article-toc ol { display:flex; flex-wrap:wrap; column-gap:20px; border:0; }
-  .article-toc li,.article-toc li.toc-nested { padding-left:0; }
+  .article-toc { border-bottom:1px solid var(--line); padding-bottom:14px; }
+  .article-toc ol { max-height:35svh; overflow-y:auto; margin-top:10px; }
   .post-body { font-size:15px; width:100%; }
-  .article-header { padding-top:30px; }
 }
 @media (max-width:579px) {
-  .posts-shell,.article-shell { padding-bottom:23px; }
-  .article-shell { padding-top:100px; }
+  .posts-shell,.article-shell.container { padding-bottom:23px; }
   .posts-masthead { padding-bottom:18px; gap:14px; }
   .posts-masthead h1 { font-size:38px; }
   .posts-count { font-size:11px; }
@@ -126,10 +123,9 @@ html[data-page="posts"] body::before { opacity:.45; mask-image:linear-gradient(t
   .post-pagination > a:first-child { justify-self:start; }
   .post-pagination > a:last-child { justify-self:end; grid-column:2; grid-row:1; }
   .post-pagination a { min-height:38px; }
-  .article-header h1 { font-size:29px; }
-  .article-header { padding-top:28px; padding-bottom:25px; }
-  .article-meta { gap:10px 15px; font-size:10px; margin-top:19px; }
-  .article-grid { padding-top:28px; }
+  .article-header h1 { font-size:28px; }
+  .article-meta { gap:8px 12px; font-size:10px; }
+  .article-grid { padding-top:20px; }
   .post-body h1,.post-body h2 { font-size:24px; }
   .post-body h3 { font-size:20px; }
   .post-body pre { padding:16px; font-size:12px; }
