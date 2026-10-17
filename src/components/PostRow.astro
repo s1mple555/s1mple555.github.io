@@ -1,0 +1,15 @@
+---
+import type { PostSummary } from '../lib/posts';
+interface Props { post?: PostSummary; }
+const { post } = Astro.props;
+---
+<article class="post-row">
+  <div class="post-row-date" hidden={!post?.datetime}><time data-post-date datetime={post?.datetime}>{post?.dateLabel}</time></div>
+  <div class="post-row-content">
+    <div class="post-row-heading">
+      <a class="post-title-link" data-post-link href={post?.href}><h2 data-post-title>{post?.title}</h2><span class="post-open-arrow" aria-hidden="true">↗</span></a>
+      <span class="post-category" data-post-category>{post?.category}</span>
+    </div>
+    <p data-post-description hidden={!post?.description}>{post?.description}</p>
+  </div>
+</article>

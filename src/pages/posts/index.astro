@@ -1,47 +1,7 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import '../../styles/posts.css';
-import SectionHeading from '../../components/SectionHeading.astro';
-import ReadingFooter from '../../components/ReadingFooter.astro';
-import { getPublishedPosts, formatPostDate, postHref } from '../../lib/posts';
-const posts = await getPublishedPosts();
-const tags = [...new Set(posts.flatMap((post) => post.tags))].sort((left, right) => left.localeCompare(right, 'zh-CN'));
+import PostsList from '../../components/PostsList.astro';
+import { getPostSummaries } from '../../lib/posts';
+import { POSTS_PER_PAGE } from '../../lib/post-settings';
+const posts = await getPostSummaries();
 ---
-<BaseLayout page="posts" title="帖子 / Posts" description="已发布的帖子与开发记录。">
-  <div class="posts-shell container">
-    <div class="posts-masthead"><SectionHeading title="帖子" english="Posts" level="h1" id="posts-title" /><p class="posts-count">{posts.length} 篇 <span lang="en">/ Published</span></p></div>
-    {posts.length ? <>
-      <div class="posts-toolbar"><label class="post-search"><span class="sr-only">搜索帖子 / Search posts</span><input id="post-search" type="search" placeholder="搜索帖子 / Search posts" autocomplete="off" /></label>{tags.length > 0 && <div class="post-filters" role="group" aria-label="帖子标签 / Post tags"><button type="button" data-post-tag="" aria-pressed="true">全部 <span lang="en">/ All</span></button>{tags.map((tag) => <button type="button" data-post-tag={tag} aria-pressed="false">{tag}</button>)}</div>}</div>
-      <p class="post-results" id="post-results" aria-live="polite">{posts.length} 篇帖子 / posts</p>
-      <div class="post-list">{posts.map((post) => <article class="post-row" data-search={post.searchText} data-tags={JSON.stringify(post.tags)}><div class="post-row-date">{post.date && <time datetime={post.date.toISOString()}>{formatPostDate(post.date)}</time>}</div><div class="post-row-content"><a class="post-title-link" href={postHref(post.slug)}><h2>{post.title}</h2><span class="post-open-arrow" aria-hidden="true">↗</span></a>{post.description && <p>{post.description}</p>}{post.tags.length > 0 && <ul class="post-tags" aria-label="标签">{post.tags.map((tag) => <li>{tag}</li>)}</ul>}</div></article>)}</div>
-      <div class="posts-no-results" id="posts-no-results" hidden><p>没有匹配的帖子</p><span lang="en">No matching posts</span></div>
-    </> : <div class="posts-empty" role="status"><span class="empty-page-icon" aria-hidden="true"><i></i><i></i><i></i></span><h2>暂无已发布帖子</h2><p lang="en">No posts yet.</p></div>}
-    <ReadingFooter />
-  </div>
-</BaseLayout>
-<script>
-  const search = document.querySelector<HTMLInputElement>('#post-search');
-  const rows = [...document.querySelectorAll<HTMLElement>('.post-row')];
-  const filters = [...document.querySelectorAll<HTMLButtonElement>('[data-post-tag]')];
-  const results = document.querySelector<HTMLElement>('#post-results');
-  const empty = document.querySelector<HTMLElement>('#posts-no-results');
-  let selectedTag = '';
-  const update = () => {
-    const query = search?.value.trim().toLocaleLowerCase() || '';
-    let count = 0;
-    rows.forEach((row) => {
-      const tags = JSON.parse(row.dataset.tags || '[]') as string[];
-      const visible = (!query || (row.dataset.search || '').includes(query)) && (!selectedTag || tags.includes(selectedTag));
-      row.hidden = !visible;
-      if (visible) count += 1;
-    });
-    if (results) results.textContent = String(count) + ' 篇帖子 / posts';
-    if (empty) empty.hidden = count !== 0;
-  };
-  search?.addEventListener('input', update);
-  filters.forEach((button) => button.addEventListener('click', () => {
-    selectedTag = button.dataset.postTag || '';
-    filters.forEach((filter) => filter.setAttribute('aria-pressed', String(filter === button)));
-    update();
-  }));
-</script>
+<PostsList posts={posts.slice(0, POSTS_PER_PAGE)} currentPage={1} totalPosts={posts.length} />

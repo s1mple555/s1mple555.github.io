@@ -1,0 +1,146 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionHeading from './SectionHeading.astro';
+import ReadingFooter from './ReadingFooter.astro';
+import PostRow from './PostRow.astro';
+import type { PostSummary } from '../lib/posts';
+import { POST_CATEGORIES, POSTS_PER_PAGE, paginationItems, postPageHref } from '../lib/post-settings';
+import { asset } from '../config';
+import '../styles/posts.css';
+interface Props { posts: PostSummary[]; currentPage: number; totalPosts: number; }
+const { posts, currentPage, totalPosts } = Astro.props;
+const totalPages = Math.max(1, Math.ceil(totalPosts / POSTS_PER_PAGE));
+const base = asset('posts/');
+---
+<BaseLayout page="posts" title="帖子 / Posts" description="已发布的帖子与开发记录。">
+  <div class="posts-shell container" data-post-listing data-total={totalPosts} data-base={base} data-index={asset('posts/search.json')}>
+    <div class="posts-masthead"><SectionHeading title="帖子" english="Posts" level="h1" id="posts-title" /><p class="posts-count">{totalPosts} 篇 <span lang="en">/ Published</span></p></div>
+    <div class="posts-toolbar">
+      <label class="post-search"><span class="sr-only">搜索帖子 / Search posts</span><input id="post-search" type="search" placeholder="搜索帖子 / Search posts" autocomplete="off" /></label>
+      <div class="post-filters" role="group" aria-label="帖子分类 / Categories"><button type="button" data-post-category="" aria-pressed="true">全部 <span lang="en">/ All</span></button>{POST_CATEGORIES.map(category => <button type="button" data-post-category={category} aria-pressed="false">{category}</button>)}</div>
+    </div>
+    <p class="post-results" id="post-results" role="status" tabindex="-1">{totalPosts} 篇帖子{totalPosts > POSTS_PER_PAGE && ` · ${(currentPage - 1) * POSTS_PER_PAGE + 1}–${Math.min(currentPage * POSTS_PER_PAGE, totalPosts)}`}</p>
+    <div class="post-list" id="post-list" hidden={!posts.length}>{posts.map(post => <PostRow post={post} />)}</div>
+    <div class="posts-no-results" id="posts-no-results" hidden><p>没有匹配的帖子</p><span lang="en">No matching posts</span></div>
+    <div class="posts-empty" hidden={totalPosts > 0}><span class="empty-page-icon" aria-hidden="true"><i></i><i></i><i></i></span><h2>暂无已发布帖子</h2><p lang="en">No posts yet.</p></div>
+    <nav class="post-pagination" aria-label="帖子分页" hidden={totalPages < 2}>
+      <a data-post-page={currentPage - 1} href={currentPage > 1 ? postPageHref(currentPage - 1, base) : undefined} aria-disabled={currentPage === 1 ? 'true' : undefined} tabindex={currentPage === 1 ? -1 : undefined}>上一页</a>
+      <ol>{paginationItems(currentPage, totalPages).map(page => <li>{page === null ? <span class="page-ellipsis">…</span> : <a data-post-page={page} href={postPageHref(page, base)} aria-current={page === currentPage ? 'page' : undefined} aria-label={`第 ${page} 页`}>{page}</a>}</li>)}</ol>
+      <a data-post-page={currentPage + 1} href={currentPage < totalPages ? postPageHref(currentPage + 1, base) : undefined} aria-disabled={currentPage === totalPages ? 'true' : undefined} tabindex={currentPage === totalPages ? -1 : undefined}>下一页</a>
+    </nav>
+    <ReadingFooter />
+    <template id="post-row-template"><PostRow /></template>
+  </div>
+</BaseLayout>
+<script>
+  import type { PostSummary } from '../lib/posts';
+  import { POST_CATEGORIES, POSTS_PER_PAGE, paginationItems, postPageHref } from '../lib/post-settings';
+  const listing = document.querySelector<HTMLElement>('[data-post-listing]');
+  if (listing) {
+    const search = listing.querySelector<HTMLInputElement>('#post-search')!;
+    const filters = [...listing.querySelectorAll<HTMLButtonElement>('button[data-post-category]')];
+    const list = listing.querySelector<HTMLElement>('#post-list')!;
+    const results = listing.querySelector<HTMLElement>('#post-results')!;
+    const empty = listing.querySelector<HTMLElement>('#posts-no-results')!;
+    const pagination = listing.querySelector<HTMLElement>('.post-pagination')!;
+    const template = listing.querySelector<HTMLTemplateElement>('#post-row-template')!;
+    const base = listing.dataset.base!;
+    let allPosts: PostSummary[] | undefined;
+    let indexRequest: Promise<PostSummary[]> | undefined;
+    let revision = 0;
+    const readState = () => {
+      const params = new URLSearchParams(location.search);
+      const category = params.get('category') || '';
+      return { query: params.get('q')?.trim() || '', category: POST_CATEGORIES.some(value => value === category) ? category : '',
+        page: Math.max(1, Number.parseInt(params.get('page') || location.pathname.slice(base.length).match(/^page\/(\d+)\/$/)?.[1] || '1', 10) || 1) };
+    };
+    let state = readState();
+    const href = (page: number) => {
+      const query = state.query.trim();
+      if (!query && !state.category) return postPageHref(page, base);
+      const params = new URLSearchParams();
+      if (query) params.set('q', query);
+      if (state.category) params.set('category', state.category);
+      if (page > 1) params.set('page', String(page));
+      return base + '?' + params.toString();
+    };
+    const syncControls = () => {
+      if (search.value !== state.query) search.value = state.query;
+      filters.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.postCategory === state.category)));
+    };
+    const loadIndex = () => indexRequest ??= fetch(listing.dataset.index!, { cache: 'no-cache' }).then(response => {
+      if (!response.ok) throw new Error('Posts index unavailable');
+      return response.json() as Promise<PostSummary[]>;
+    }).catch(error => { indexRequest = undefined; throw error; });
+    const renderRow = (post: PostSummary) => {
+      const row = template.content.cloneNode(true) as DocumentFragment;
+      row.querySelector<HTMLAnchorElement>('[data-post-link]')!.href = post.href;
+      row.querySelector('[data-post-title]')!.textContent = post.title;
+      row.querySelector('[data-post-category]')!.textContent = post.category;
+      const description = row.querySelector<HTMLElement>('[data-post-description]')!;
+      description.textContent = post.description; description.hidden = !post.description;
+      const date = row.querySelector<HTMLTimeElement>('[data-post-date]')!;
+      date.dateTime = post.datetime || ''; date.textContent = post.dateLabel || '';
+      date.parentElement!.hidden = !post.datetime;
+      return row;
+    };
+    const renderPagination = (total: number) => {
+      pagination.hidden = total < 2;
+      pagination.querySelector('ol')!.replaceChildren(...paginationItems(state.page, total).map(page => {
+        const item = document.createElement('li');
+        const label = document.createElement(page === null ? 'span' : 'a');
+        label.textContent = page === null ? '…' : String(page);
+        if (label instanceof HTMLAnchorElement && page !== null) {
+          label.href = href(page); label.dataset.postPage = String(page); label.setAttribute('aria-label', `第 ${page} 页`);
+          if (page === state.page) label.setAttribute('aria-current', 'page');
+        } else label.className = 'page-ellipsis';
+        item.append(label); return item;
+      }));
+      const ends = [...pagination.querySelectorAll<HTMLAnchorElement>(':scope > a')];
+      ends.forEach((link, index) => {
+        const page = state.page + (index === 0 ? -1 : 1);
+        const disabled = page < 1 || page > total;
+        link.dataset.postPage = String(page);
+        if (disabled) { link.removeAttribute('href'); link.setAttribute('aria-disabled', 'true'); link.tabIndex = -1; }
+        else { link.href = href(page); link.removeAttribute('aria-disabled'); link.removeAttribute('tabindex'); }
+      });
+    };
+    const update = async (historyMode: 'push' | 'replace' | 'none', scroll = false) => {
+      const request = ++revision;
+      syncControls(); list.setAttribute('aria-busy', 'true');
+      try {
+        allPosts = await loadIndex();
+        if (request !== revision) return;
+        const query = state.query.trim().toLocaleLowerCase();
+        const matching = allPosts.filter(post => (!state.category || post.category === state.category) && (!query || post.searchText.includes(query)));
+        const totalPages = Math.max(1, Math.ceil(matching.length / POSTS_PER_PAGE));
+        state.page = Math.min(state.page, totalPages);
+        const start = (state.page - 1) * POSTS_PER_PAGE;
+        list.replaceChildren(...matching.slice(start, start + POSTS_PER_PAGE).map(renderRow));
+        list.hidden = !matching.length;
+        empty.hidden = matching.length !== 0 || Number(listing.dataset.total) === 0;
+        results.textContent = `${matching.length} 篇帖子` + (matching.length > POSTS_PER_PAGE ? ` · ${start + 1}–${Math.min(start + POSTS_PER_PAGE, matching.length)}` : '');
+        renderPagination(totalPages);
+        if (historyMode !== 'none') history[historyMode === 'push' ? 'pushState' : 'replaceState'](null, '', href(state.page));
+        if (scroll) window.scrollTo({ top: 0, behavior: 'instant' });
+      } catch {
+        if (request === revision) results.textContent = '暂时无法筛选帖子，请刷新重试。';
+      } finally {
+        if (request === revision) list.removeAttribute('aria-busy');
+      }
+    };
+    search.addEventListener('input', () => { state.query = search.value; state.page = 1; void update('replace'); });
+    filters.forEach(button => button.addEventListener('click', () => { state.category = button.dataset.postCategory || ''; state.page = 1; void update('push'); }));
+    pagination.addEventListener('click', event => {
+      const link = event.target instanceof Element ? event.target.closest<HTMLAnchorElement>('a[data-post-page]') : null;
+      if (!link || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+      if (link.getAttribute('aria-disabled') === 'true') { event.preventDefault(); return; }
+      if (!allPosts) return; // Unfiltered pagination remains an ordinary static link.
+      event.preventDefault(); state.page = Number(link.dataset.postPage);
+      void update('push', true).then(() => { if (event.detail === 0) results.focus({ preventScroll: true }); });
+    });
+    window.addEventListener('popstate', () => { state = readState(); void update('none'); });
+    syncControls();
+    if (state.query || state.category || new URLSearchParams(location.search).has('page')) void update('replace');
+  }
+</script>

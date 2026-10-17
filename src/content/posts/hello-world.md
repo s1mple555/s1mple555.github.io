@@ -2,8 +2,7 @@
 title: Hello World
 description: 你好，世界！用 Markdown 发布的第一篇帖子。
 date: 2026-10-17
-tags:
-  - 随笔
+category: 随笔
 ---
 
 # Hello World

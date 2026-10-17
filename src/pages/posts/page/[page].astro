@@ -1,0 +1,18 @@
+---
+import type { GetStaticPaths } from 'astro';
+import PostsList from '../../../components/PostsList.astro';
+import { getPostSummaries, type PostSummary } from '../../../lib/posts';
+import { POSTS_PER_PAGE } from '../../../lib/post-settings';
+export const getStaticPaths = (async () => {
+  const posts = await getPostSummaries();
+  return Array.from({ length: Math.max(0, Math.ceil(posts.length / POSTS_PER_PAGE) - 1) }, (_, index) => {
+    const currentPage = index + 2;
+    return { params: { page: String(currentPage) }, props: {
+      posts: posts.slice((currentPage - 1) * POSTS_PER_PAGE, currentPage * POSTS_PER_PAGE),
+      currentPage, totalPosts: posts.length,
+    } };
+  });
+}) satisfies GetStaticPaths;
+interface Props { posts: PostSummary[]; currentPage: number; totalPosts: number; }
+---
+<PostsList {...Astro.props} />

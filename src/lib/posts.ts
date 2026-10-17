@@ -1,5 +1,6 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
 import { asset } from '../config';
+import type { PostCategory } from './post-settings';
 
 export interface PublishedPost {
   entry: CollectionEntry<'posts'>;
@@ -9,6 +10,7 @@ export interface PublishedPost {
   date?: Date;
   updated?: Date;
   tags: string[];
+  category: PostCategory;
   searchText: string;
   hasLeadingTitle: boolean;
 }
@@ -25,9 +27,8 @@ function excerpt(body: string): string {
   const characters = Array.from(plainText(text || ''));
   return characters.slice(0, 120).join('') + (characters.length > 120 ? '…' : '');
 }
-export function formatPostDate(date: Date): string {
-  return new Intl.DateTimeFormat('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit', timeZone: 'Asia/Shanghai' }).format(date);
-}
+const dateFormatter = new Intl.DateTimeFormat('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit', timeZone: 'Asia/Shanghai' });
+export const formatPostDate = (date: Date): string => dateFormatter.format(date);
 export function postHref(slug: string): string {
   return asset('posts/' + slug.split('/').map(encodeURIComponent).join('/') + '/');
 }
@@ -40,10 +41,28 @@ export async function getPublishedPosts(): Promise<PublishedPost[]> {
     const title = entry.data.title?.trim() || plainText(firstHeading || filename);
     const description = entry.data.description?.trim() || excerpt(body);
     const leadingHeading = body.trimStart().match(/^#\s+(.+?)\s*#*\s*(?:\r?\n|$)/)?.[1];
+    const category = entry.data.category ?? (entry.data.tags.includes('技术') ? '技术' : '随笔');
     return { entry, slug: entry.id, title, description, date: entry.data.date,
-      updated: entry.data.updated, tags: entry.data.tags,
-      searchText: plainText([title, description, entry.data.tags.join(' '), body].join(' ')).toLocaleLowerCase(),
+      updated: entry.data.updated, category, tags: entry.data.tags.filter(tag => tag !== category),
+      searchText: plainText([title, description, category, entry.data.tags.join(' '), body].join(' ')).toLocaleLowerCase(),
       hasLeadingTitle: Boolean(leadingHeading && plainText(leadingHeading) === title),
     };
   }).sort((left, right) => ((right.date?.getTime() || 0) - (left.date?.getTime() || 0)) || left.slug.localeCompare(right.slug, 'zh-CN'));
+}
+
+export interface PostSummary {
+  href: string;
+  title: string;
+  description: string;
+  category: PostCategory;
+  datetime?: string;
+  dateLabel?: string;
+  searchText: string;
+}
+export async function getPostSummaries(): Promise<PostSummary[]> {
+  return (await getPublishedPosts()).map(post => ({
+    href: postHref(post.slug), title: post.title, description: post.description,
+    category: post.category, datetime: post.date?.toISOString(),
+    dateLabel: post.date && formatPostDate(post.date), searchText: post.searchText,
+  }));
 }
