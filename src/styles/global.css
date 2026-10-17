@@ -77,13 +77,28 @@ ul { list-style:none; margin:0; padding:0; }
 .about-paragraph { color:var(--copy); font-size:16px; line-height:1.8; }
 .about-paragraph.lead { font-size:20px; line-height:1.8; }
 .capabilities { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; margin-top:26px; }
-.capability { padding:17px 19px; border:1px solid var(--line); border-radius:13px; background:#fff; min-width:0; }
+.capability-slot { display:flex; min-width:0; }
+.capability { flex:1; padding:17px 19px; border:1px solid #29364c; border-radius:13px; background:radial-gradient(ellipse 85% 130% at 100% 0,#21488066,transparent 75%),var(--ink); color:#f4f7fc; min-width:0; box-shadow:inset 0 1px 0 #ffffff08; transition:border-color .2s,box-shadow .2s; }
 .capability h3 { font-size:13px; font-weight:600; margin-bottom:12px; min-height:16px; }
 .capability h3 .text-placeholder { width:65%; }
 .tags { display:flex; flex-wrap:wrap; gap:6px; }
-.tags > span { display:inline-flex; align-items:center; font-size:10px; background:#f1f4f8; border-radius:4px; padding:4px 7px; color:#627087; min-height:22px; }
+.tags > span { display:inline-flex; align-items:center; font-size:10px; background:#223047; border-radius:4px; padding:4px 7px; color:#c6d2e4; min-height:22px; }
 .tags .blank-tag { min-width:43px; }
 .blank-tag i { width:29px; height:4px; border-radius:2px; background:#dce3ee; }
+@media (hover:hover) and (pointer:fine) {
+  .capability-slot:hover .capability { border-color:#4d668d; box-shadow:0 10px 24px -18px #12234c66,inset 0 1px 0 #ffffff0d; }
+}
+@media (hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference) {
+  /* The stationary slot keeps the hover target steady while the card moves. */
+  .capability-slot:hover .capability { animation:capability-settle .52s ease-out 1; }
+}
+@keyframes capability-settle {
+  0%,100% { transform:translateY(0) rotate(0); }
+  22% { transform:translateY(-3px) rotate(-.65deg); }
+  44% { transform:translateY(-2px) rotate(.5deg); }
+  65% { transform:translateY(-1px) rotate(-.25deg); }
+  82% { transform:translateY(0) rotate(.12deg); }
+}
 .project-tagline { color:var(--blue); font-size:18px; font-weight:600; line-height:1.7; margin-top:16px; }
 /* Two practice cards and one harness strip. */
 .project-intro { margin-top:24px; color:var(--copy); }
