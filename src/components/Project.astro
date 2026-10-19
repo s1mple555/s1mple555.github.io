@@ -1,26 +1,6 @@
 ---
-import { siteConfig } from '../config';
-import PlaceholderText from './PlaceholderText.astro';
-import SectionHeading from './SectionHeading.astro';
 import EasyStudy from './EasyStudy.astro';
-const practice = siteConfig.project2;
+import Harness from './Harness.astro';
 ---
 <EasyStudy />
-<section class="screen" id="project-2" data-nav-group="projects" aria-labelledby="project-2-title">
-      <div class="container screen-content section-grid">
-        <div>
-          <SectionHeading title={practice.name} english="Project 2" id="project-2-title" />
-          <p class="project-tagline">{practice.tagline}</p>
-          <p class="project-intro">{practice.intro || <PlaceholderText lines={2} />}</p>
-        </div>
-        <div class="practice-content">
-          {practice.cards.map((card, cardIndex) => <article class:list={['practice-card', { 'dark-card': cardIndex === 1 }]}>
-            <div class="practice-top"><span>{card.label || <PlaceholderText lines={1} />}</span><span>{String(cardIndex + 1).padStart(2, '0')}</span></div>
-            <h3>{card.title || <PlaceholderText lines={1} />}</h3>
-            <p>{card.description || <PlaceholderText lines={2} />}</p>
-            <p class="practice-outcome">{card.outcome || <PlaceholderText lines={1} />}</p>
-          </article>)}
-          <div class="harness-strip"><span>AI HARNESS</span><p>{practice.harness || <PlaceholderText lines={2} />}</p></div>
-        </div>
-      </div>
-</section>
+<Harness />

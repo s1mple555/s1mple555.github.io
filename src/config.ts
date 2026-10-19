@@ -35,13 +35,19 @@ export const siteConfig = {
     ],
   },
   project2: {
-    name: '项目2', tagline: 'Agent Harness', intro: '',
-    cards: Array.from({ length: 2 }, () => ({ label: '', title: '', description: '', outcome: '' })),
-    harness: '',
+    name: 'Agent Harness',
+    tagline: '让长任务接着做，让完成有依据。',
+    summary: '面向代码修改与验证的 Agent 执行框架。围绕上下文治理、工作流恢复与目标验收，让长任务持续推进，让执行过程可以追踪。',
+    technology: ['Python', 'Tool Calling', 'Asyncio'],
+    features: [
+      { id: 'context', title: '上下文治理', english: 'Context', headline: '把过程存下来，把空间留给下一步。', description: '大工具结果落盘，旧消息归档，必要时再生成摘要；保留当前目标与恢复路径，让长任务在有限上下文中继续。', principle: '先做可恢复的整理，再做有损的摘要。' },
+      { id: 'resume', title: '断点恢复', english: 'Resume', headline: '中断之后，从已有结果继续。', description: '用 journal 记录工作流步骤，以调用内容生成稳定缓存键；续跑时复用已完成结果，让执行顺序与恢复逻辑都可追踪。', principle: '缓存对应调用内容，不依赖并发完成顺序。' },
+      { id: 'goal', title: '目标验收', english: 'Goal', headline: '模型想停下，任务还要过一关。', description: '在停止位置加入独立判断器，依据对话中的验证结果检查完成条件；证据不足则继续，遇到异常或执行上限则交还控制权。', principle: '停止是一种状态，完成需要验证证据。' },
+    ],
   },
   education: [
     { school: '西安电子科技大学', period: '2022–2026', program: '网络空间安全', location: '西安', note: '成绩排名前 10%，获得推免名额，曾获国家奖学金。' },
-    { school: '东南大学', period: '2026–2029', program: '网络空间安全', location: '南京', note: '硕士研究生一等奖学金' },
+    { school: '东南大学', period: '2026–2029', program: '网络空间安全', location: '南京', note: '硕士研究生二等奖学金' },
   ],
   experience: [
     {

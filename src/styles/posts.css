@@ -50,14 +50,14 @@ html[data-page="posts"] body::before { opacity:.45; mask-image:linear-gradient(t
 .page-ellipsis { padding-inline:0; min-width:20px; }
 
 /* Article pages: readable prose, code, tables, and an optional quiet contents rail. */
-.article-shell.container { max-width:760px; padding-top:88px; padding-bottom:26px; }
+.article-shell.container { max-width:1000px; padding-top:88px; padding-bottom:26px; }
 .article-back,.article-end-link { display:inline-flex; gap:6px; color:#74839b; font-size:12px; }
 .article-back:hover,.article-end-link:hover { color:var(--blue); }
 .article-header { padding:14px 0 18px; border-bottom:1px solid var(--line); }
 .article-header h1 { font-size:clamp(29px,3.2vw,38px); line-height:1.3; font-weight:650; letter-spacing:-1px; overflow-wrap:anywhere; }
 .article-meta { display:flex; align-items:center; flex-wrap:wrap; gap:8px 18px; color:#8b97aa; font-size:11px; margin-top:12px; }
 .article-grid { display:grid; gap:20px; padding-top:24px; }
-.post-body { max-width:760px; min-width:0; color:#465267; font-size:16px; line-height:1.95; overflow-wrap:anywhere; }
+.post-body { max-width:100%; min-width:0; color:#465267; font-size:16px; line-height:1.95; overflow-wrap:anywhere; }
 .post-body.has-leading-title > h1:first-child { display:none; }
 .post-body > :first-child { margin-top:0; }
 .post-body.has-leading-title > h1:first-child + * { margin-top:0; }
@@ -88,8 +88,8 @@ html[data-page="posts"] body::before { opacity:.45; mask-image:linear-gradient(t
 .article-toc a:hover { color:var(--blue); }
 .article-end-link { margin-top:45px; }
 @media (min-width:860px) {
-  /* Reserve a clear gutter even on small desktops; the rail follows the viewport edge. */
-  .article-shell.has-toc { width:min(760px,calc(100% - 288px)); margin-left:max(40px,calc((100% - 1080px)/2)); margin-right:auto; }
+  /* Widen the article while reserving at least 40px before the fixed contents rail. */
+  .article-shell.has-toc { width:min(1000px,calc(100% - 342px)); margin-left:max(94px,calc((100% - 1320px)/2 + 54px)); margin-right:auto; }
   .article-sidebar { position:fixed; top:100px; right:20px; width:188px; max-height:calc(100svh - 124px); overflow-y:auto; scrollbar-width:thin; background:#fffffff0; border-radius:8px; padding:12px; }
 }
 @media (max-width:859px) {
