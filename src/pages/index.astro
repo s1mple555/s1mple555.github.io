@@ -8,3 +8,33 @@ import Photography from '../components/Photography.astro';
 import Athletics from '../components/Athletics.astro';
 ---
 <BaseLayout><Hero /><About /><Project /><Background /><Photography /><Athletics /></BaseLayout>
+
+<script>
+  // Measure the unscaled layout so fitting does not feed back into its own size.
+  const screens = [...document.querySelectorAll<HTMLElement>('.screen')];
+  let fitFrame = 0;
+  function fitScreens() {
+    fitFrame = 0;
+    const fits = screens.map((screen) => {
+      const content = screen.querySelector<HTMLElement>('.screen-content');
+      if (!content) return null;
+      const style = getComputedStyle(screen);
+      const available = screen.clientHeight - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom);
+      const scale = Math.min(1, Math.max(0, available - 2) / Math.max(1, content.offsetHeight));
+      return { content, scale };
+    });
+    fits.forEach((fit) => fit?.content.style.setProperty('--screen-scale', String(fit.scale)));
+  }
+  function scheduleFit() {
+    if (!fitFrame) fitFrame = requestAnimationFrame(fitScreens);
+  }
+  const fitObserver = new ResizeObserver(scheduleFit);
+  screens.forEach((screen) => {
+    fitObserver.observe(screen);
+    const content = screen.querySelector<HTMLElement>('.screen-content');
+    if (content) fitObserver.observe(content);
+  });
+  window.addEventListener('resize', scheduleFit, { passive: true });
+  document.fonts.ready.then(scheduleFit);
+  fitScreens();
+</script>

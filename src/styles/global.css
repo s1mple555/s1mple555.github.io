@@ -19,9 +19,9 @@ ul { list-style:none; margin:0; padding:0; }
 :focus-visible { outline:3px solid #3b82f6; outline-offset:4px; }
 ::selection { color:#fff; background:var(--blue); }
 .container { width:min(calc(100% - 112px),1152px); margin-inline:auto; }
-/* Every section owns exactly one viewport. The fixed header occupies its reserved top inset. */
-.screen { position:relative; height:100svh; min-height:100svh; padding:94px 0 36px; display:flex; align-items:center; scroll-snap-align:start; scroll-snap-stop:always; scroll-margin-top:0; }
-.screen-content { max-height:100%; min-height:0; overflow-x:clip; overflow-y:auto; scrollbar-width:thin; }
+/* Each section fits one viewport, including the reserved header and footer insets. */
+.screen { position:relative; height:100svh; min-height:100svh; padding:94px 0 36px; display:flex; align-items:center; scroll-snap-align:start; scroll-snap-stop:always; scroll-margin-top:0; overflow:clip; }
+.screen-content { min-height:0; flex-shrink:0; overflow:visible; transform:scale(var(--screen-scale,1)); transform-origin:center; }
 .section-grid { display:grid; grid-template-columns:minmax(0,.85fr) minmax(0,1.65fr); gap:80px; align-items:start; }
 .section-heading h2 { font-size:clamp(36px,4.6vw,64px); font-weight:700; letter-spacing:-1.8px; line-height:1.15; }
 .section-label { font-size:10px; font-weight:600; color:#8390a2; letter-spacing:.11em; margin-bottom:15px; }
@@ -84,7 +84,7 @@ ul { list-style:none; margin:0; padding:0; }
   to { opacity:1; transform:translateY(0); }
 }
 /* Reference about: 3 paragraphs and a 2 by 2 capability grid. */
-/* Leave room for the last row's hover rotation inside the section scroller. */
+/* Leave room for the last row’s hover rotation inside the fitted content. */
 .about-content { padding-bottom:8px; }
 .about-paragraphs { display:grid; gap:18px; }
 .about-paragraph { color:var(--copy); font-size:16px; line-height:1.8; }
