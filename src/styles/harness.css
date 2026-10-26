@@ -12,7 +12,7 @@
 .harness-tech { display:flex; flex-wrap:wrap; gap:7px; margin-top:18px; }
 .harness-tech li { font-size:10px; line-height:1.5; padding:5px 9px; border:1px solid #dce5f2; border-radius:5px; background:#ffffffa8; color:#52627b; }
 .harness-explorer { width:100%; max-width:670px; justify-self:end; }
-.harness-tabs { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); border-bottom:1px solid #dbe3ef; gap:8px; }
+.harness-tabs { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); border-bottom:1px solid #dbe3ef; gap:8px; }
 .harness-tabs button { position:relative; display:flex; flex-direction:column; align-items:center; gap:5px; background:transparent; padding:13px 6px 15px; color:#64748b; }
 .harness-tabs button > span { font-size:13px; font-weight:600; line-height:1.5; }
 .harness-tabs button > small { font-size:9px; line-height:1.4; color:#7b8799; }
@@ -134,4 +134,13 @@
   .harness-context-flow { margin-top:12px; }
   .harness-feature-copy { padding-top:15px; }
   .harness-feature-copy h3 { font-size:15px; }
+}
+
+.harness-actions { display:flex; flex-wrap:wrap; align-items:center; gap:12px; margin-top:18px; }
+.harness-actions .button { font-size:12px; min-height:38px; padding:9px 13px; }
+.harness-actions > span { font-size:10px; color:var(--copy); }
+@media (max-width:579px) {
+  .harness-tabs { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .harness-actions { margin-top:12px; }
+  .harness-actions .button { font-size:11px; min-height:34px; padding:8px 11px; }
 }

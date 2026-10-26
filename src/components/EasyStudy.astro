@@ -22,9 +22,12 @@ const project = siteConfig.project1;
         {project.workflow.map((step) => <li>{step}</li>)}
       </ol>
       <ul class="easystudy-tech" aria-label="项目技术栈">{project.technology.map((technology) => <li>{technology}</li>)}</ul>
+      <dl class="easystudy-highlights" aria-label="工程亮点">
+        {project.highlights.map((highlight) => <div><dt>{highlight.title}</dt><dd>{highlight.description}</dd></div>)}
+      </dl>
       <div class="easystudy-actions">
         <a class="button button-primary" href={project.site} target="_blank" rel="noopener noreferrer">访问 EasyStudy <span aria-hidden="true">↗</span></a>
-        <span class="easystudy-domain">easy-study.s1mple.top</span>
+        <span class="easystudy-domain">{project.period}</span>
       </div>
     </div>
     <div class="easystudy-explorer" data-easystudy-explorer>

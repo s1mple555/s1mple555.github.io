@@ -11,7 +11,7 @@ const project = siteConfig.project2;
           <rect x="1" y="1" width="36" height="36" rx="11" stroke="currentColor" stroke-opacity=".2" />
           <path d="M13 11H9v16h4m12-16h4v16h-4M16 15l6 4-6 4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
         </svg>
-        <p>为模型构建执行环境<span lang="en">Coding agent runtime</span></p>
+        <p>个人编程辅助 Agent<span lang="en">Coding agent runtime</span></p>
       </div>
       <div class="section-heading">
         <p class="section-label" lang="en">Project 2</p>
@@ -23,9 +23,13 @@ const project = siteConfig.project2;
       <ul class="harness-tech" aria-label="项目技术栈">
         {project.technology.map((technology) => <li>{technology}</li>)}
       </ul>
+      <div class="harness-actions">
+        <a class="button button-primary" href={project.github} target="_blank" rel="noopener noreferrer">在 GitHub 查看源码 <span aria-hidden="true">↗</span></a>
+        <span>{project.period}</span>
+      </div>
     </div>
     <div class="harness-explorer" data-harness-explorer>
-      <div class="harness-tabs" role="tablist" aria-label="查看 Harness 核心机制">
+      <div class="harness-tabs" role="tablist" aria-label="查看 E_coder 核心机制">
         {project.features.map((feature, index) => (
           <button type="button" role="tab" id={'harness-tab-' + feature.id} aria-controls={'harness-panel-' + feature.id} aria-selected={index === 0 ? 'true' : 'false'} tabindex={index === 0 ? 0 : -1}>
             <span>{feature.title}</span><small lang="en">{feature.english}</small>
@@ -36,53 +40,18 @@ const project = siteConfig.project2;
         {project.features.map((feature, index) => (
           <div class="harness-panel" role="tabpanel" id={'harness-panel-' + feature.id} aria-labelledby={'harness-tab-' + feature.id} tabindex="0" hidden={index !== 0}>
             <div class="harness-visual">
-              <div class="harness-visual-top"><span class="harness-file-mark" aria-hidden="true"></span><span>{feature.id === 'context' ? 'messages / context' : feature.id === 'resume' ? 'workflow / journal' : 'session / goal'}</span></div>
-              {feature.id === 'context' && (
-                <div class="harness-context">
-                  <div class="harness-context-heading"><span>保留目标，收起细节</span><span class="harness-state">可恢复</span></div>
-                  <div class="harness-context-flow">
-                    <div class="harness-context-input">
-                      <p class="harness-column-label">原始上下文</p>
-                      <div class="harness-message harness-message-request"><span>用户目标</span><i></i></div>
-                      <div class="harness-message"><span>文件与工具结果</span><i></i><i></i><i></i><i></i></div>
-                      <div class="harness-message"><span>较早的对话</span><i></i><i></i><i></i></div>
-                    </div>
-                    <svg class="harness-flow-arrow" width="26" height="26" viewBox="0 0 26 26" fill="none" aria-hidden="true"><path d="M4 13h18m-6-6 6 6-6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" /></svg>
-                    <div class="harness-context-output">
-                      <p class="harness-column-label">下一轮输入</p>
-                      <div class="harness-retained"><span class="harness-check" aria-hidden="true">✓</span><span>当前目标与约束</span></div>
-                      <div class="harness-retained"><span class="harness-check" aria-hidden="true">✓</span><span>近期结果与历史摘要</span></div>
-                      <div class="harness-output-ref"><span>完整结果已落盘</span><code>tool-results/*.txt</code><small>需要时重新读取</small></div>
-                    </div>
-                  </div>
-                  <div class="harness-visual-footer"><span>转存大结果</span><span aria-hidden="true">→</span><span>归档旧消息</span><span aria-hidden="true">→</span><span>按需摘要</span></div>
-                </div>
-              )}
-              {feature.id === 'resume' && (
-                <div class="harness-resume">
-                  <div class="harness-context-heading"><span>恢复一次中断的审查</span><span class="harness-state">Resume</span></div>
-                  <ol class="harness-workflow" aria-label="工作流恢复过程">
-                    <li class="harness-workflow-cached"><span class="harness-workflow-node" aria-hidden="true">✓</span><div><strong>审查变更</strong><small>复用 journal 中的结果</small></div><span class="harness-workflow-status">cached</span></li>
-                    <li class="harness-workflow-active"><span class="harness-workflow-node" aria-hidden="true">↻</span><div><strong>验证发现</strong><small>执行尚未完成的步骤</small></div><span class="harness-workflow-status">继续执行</span></li>
-                    <li><span class="harness-workflow-node" aria-hidden="true">·</span><div><strong>汇总报告</strong><small>根据验证结果生成结论</small></div><span class="harness-workflow-status">等待结果</span></li>
-                  </ol>
-                  <div class="harness-journal"><span>稳定调用键</span><code>hash(label, prompt, schema)</code><span>匹配已有结果</span></div>
-                </div>
-              )}
-              {feature.id === 'goal' && (
-                <div class="harness-goal">
-                  <div class="harness-context-heading"><span>完成条件：测试通过</span><span class="harness-state">Goal gate</span></div>
-                  <div class="harness-terminal" aria-label="目标检查示意">
-                    <p><span class="harness-terminal-role">agent</span><span>准备结束当前回合</span></p>
-                    <p><span class="harness-terminal-role">judge</span><span class="harness-terminal-wait">缺少验证结果，继续执行</span></p>
-                    <div class="harness-terminal-rule"></div>
-                    <p><span class="harness-terminal-role">tool</span><code>python -m pytest</code></p>
-                    <p><span class="harness-terminal-role"></span><span>exit_code: <b>0</b></span></p>
-                    <p><span class="harness-terminal-role">judge</span><span class="harness-terminal-pass">验证证据已返回，允许结束</span></p>
-                  </div>
-                  <div class="harness-visual-footer harness-goal-exits"><span>未完成 → 继续</span><span>后台运行 → 等待</span><span>异常 / 达上限 → 返回</span></div>
-                </div>
-              )}
+              <div class="harness-visual-top"><span class="harness-file-mark" aria-hidden="true"></span><span>E_coder / {feature.english}</span></div>
+              <div class="harness-resume">
+                <div class="harness-context-heading"><span>{feature.title}流程</span><span class="harness-state">{feature.english}</span></div>
+                <ol class="harness-workflow" aria-label={feature.title + '流程'}>
+                  {feature.steps.map((step, stepIndex) => (
+                    <li class={stepIndex === 1 ? 'harness-workflow-active' : ''}>
+                      <span class="harness-workflow-node" aria-hidden="true">{stepIndex + 1}</span>
+                      <div><strong>{step.title}</strong><small>{step.detail}</small></div>
+                    </li>
+                  ))}
+                </ol>
+              </div>
             </div>
             <div class="harness-feature-copy">
               <h3>{feature.headline}</h3>

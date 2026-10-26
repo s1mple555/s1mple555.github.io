@@ -93,3 +93,10 @@
   .easystudy-feature-image { aspect-ratio:auto; height:clamp(128px,calc(85svh - 306px),247px); }
   .easystudy-feature-copy { min-height:98px; padding:12px 15px; }
 }
+
+.easystudy-highlights { display:grid; gap:11px; margin-top:16px; }
+.easystudy-highlights dt { font-size:11px; font-weight:600; color:#334155; line-height:1.6; }
+.easystudy-highlights dd { margin:3px 0 0; font-size:11px; line-height:1.8; color:var(--copy); }
+@media (max-width:859px) {
+  .easystudy-highlights { gap:8px; margin-top:12px; }
+}
